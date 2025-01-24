@@ -1,21 +1,14 @@
 'use client';
 import { motion } from 'framer-motion';
+import DocxEditor from '@/components/DocxEditor';
+import { useState } from 'react';
+import mammoth from 'mammoth';
 
 export default function Landing() {
+  const [editorContent, setEditorContent] = useState<string>('');
+  const [isEditingOptimized, setIsEditingOptimized] = useState(false);
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-300 to-purple-50">
-      <nav className="p-6 bg-white/80 backdrop-blur-md">
-        <div className="max-w-6xl mx-auto flex justify-between items-center">
-          <motion.h1
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-blue-500 bg-clip-text text-transparent"
-          >
-            Suarte
-          </motion.h1>
-        </div>
-      </nav>
-
       <main className="max-w-6xl mx-auto px-4 py-16">
         <motion.section
           initial={{ opacity: 0 }}
@@ -51,24 +44,86 @@ export default function Landing() {
         </motion.div>
 
         <section className="text-center bg-white py-16 rounded-2xl shadow-lg">
-          <h3 className="text-3xl font-bold mb-6 text-gray-800">Join 50,000+ Successful Students</h3>
-          <button
-            type="submit"
-            className="flex text-blue-300 justify-center gap-2 items-center mx-auto shadow-xl text-lg bg-gray-50 backdrop-blur-md lg:font-semibold isolation-auto border-gray-50 before:absolute before:w-full before:transition-all before:duration-700 before:hover:w-full before:-left-full before:hover:left-0 before:rounded-full before:bg-blue-500 hover:text-gray-50 before:-z-10 before:aspect-square before:hover:scale-150 before:hover:duration-700 relative z-10 px-4 py-2 overflow-hidden border-2 rounded-full group"
-            onClick={() => window.open('http://localhost:5000','_blank')}
-          >
-            Get Started
-            <svg
-              className="w-8 h-8 justify-end group-hover:rotate-90 group-hover:bg-gray-50 text-gray-50 ease-linear duration-300 rounded-full border border-gray-700 group-hover:border-none p-2 rotate-45"
-              viewBox="0 0 16 19"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M7 18C7 18.5523 7.44772 19 8 19C8.55228 19 9 18.5523 9 18H7ZM8.70711 0.292893C8.31658 -0.0976311 7.68342 -0.0976311 7.29289 0.292893L0.928932 6.65685C0.538408 7.04738 0.538408 7.68054 0.928932 8.07107C1.31946 8.46159 1.95262 8.46159 2.34315 8.07107L8 2.41421L13.6569 8.07107C14.0474 8.46159 14.6805 8.46159 15.0711 8.07107C15.4616 7.68054 15.4616 7.04738 15.0711 6.65685L8.70711 0.292893ZM9 18L9 1H7L7 18H9Z"
-                className="fill-gray-800 group-hover:fill-gray-800"
-              ></path>
-            </svg>
-          </button>
+          <h3 className="text-3xl font-bold mb-6 text-gray-800">Resume Editor</h3>
+          <div className="max-w-4xl mx-auto">
+            <div className="mb-8 space-y-4">
+          <label className="inline-block px-6 py-3 bg-purple-600 text-white rounded-lg cursor-pointer hover:bg-purple-700 transition-colors">
+            <span>Upload Resume to Optimize</span>
+            <input
+              type="file"
+              accept=".docx,.pdf"
+              className="hidden"
+              onChange={async (e) => {
+                const file = e.target.files?.[0];
+                if (file) {
+                  try {
+                    const formData = new FormData();
+                    formData.append('file', file);
+                    
+                    const response = await fetch('http://localhost:5001/api/optimize', {
+                      method: 'POST',
+                      body: formData,
+                    });
+
+                    if (!response.ok) throw new Error('Optimization failed');
+                    
+                    const optimizedBlob = await response.blob();
+                    const arrayBuffer = await optimizedBlob.arrayBuffer();
+                    
+                    // Convert optimized DOCX to HTML for editing
+                    const result = await mammoth.convertToHtml({ arrayBuffer });
+                    setEditorContent(result.value);
+                    setIsEditingOptimized(true);
+                    
+                  } catch (error) {
+                    console.error('Optimization error:', error);
+                    alert('Error optimizing resume');
+                  }
+                }
+              }}
+            />
+          </label>
+          
+          {isEditingOptimized && (
+            <p className="text-green-600 font-medium">
+              Editing optimized version - changes will be saved to new document
+            </p>
+          )}
+        </div>
+
+        <DocxEditor 
+          key={editorContent} // Force re-render when content changes
+          initialHtml={editorContent}
+          onSave={async (htmlContent: string) => {
+                try {
+                  const response = await fetch('http://localhost:5001/api/convert', {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                      html: htmlContent,
+                      filename: 'optimized_resume.docx'
+                    })
+                  });
+                  
+                  if (!response.ok) throw new Error('Conversion failed');
+                  
+                  const blob = await response.blob();
+                  const downloadUrl = window.URL.createObjectURL(blob);
+                  const link = document.createElement('a');
+                  link.href = downloadUrl;
+                  link.download = 'optimized_resume.docx';
+                  document.body.appendChild(link);
+                  link.click();
+                  link.remove();
+                } catch (error) {
+                  console.error('Download failed:', error);
+                  alert('Error generating DOCX file');
+                }
+              }}
+            />
+          </div>
         </section>
       </main>
     </div>
