@@ -10,7 +10,7 @@ export default function NavBar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
-    <nav className="bg-gray-900/90 backdrop-blur-sm shadow-lg rounded-b-lg">
+    <nav className="bg-white backdrop-blur-sm shadow-lg rounded-b-lg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-center h-16">
           {/* Left section - Logo and mobile menu button */}
@@ -26,7 +26,7 @@ export default function NavBar() {
               href="/" 
               className="ml-4 flex-shrink-0 flex items-center"
             >
-              <Button text='Suarte' />
+              <Button text='Resume Wave' />
             </Link>
           </div>
 
@@ -47,7 +47,7 @@ export default function NavBar() {
                 {({ open }) => (
                   <>
                     <Menu.Button className="flex text-sm rounded-full focus:outline-none">
-                      <UserCircleIcon className="h-8 w-8 text-gray-300 hover:text-white transition-colors duration-200" />
+                      <UserCircleIcon className="h-8 w-8 text-blue-500 hover:text-blue-200 transition-colors duration-200" />
                     </Menu.Button>
 
                     <Transition

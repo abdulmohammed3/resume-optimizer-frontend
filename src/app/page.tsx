@@ -13,7 +13,7 @@ export default function Home() {
           className="text-center space-y-8 mt-40"
         >
           <h1 className="text-6xl text-white tracking-wide drop-shadow-[0_2px_4px_rgba(0,0,0,0.1)]">
-            Welcome to Resume Optimizer
+            Welcome to Resume Wave
           </h1>
           <p className="text-2xl text-white/90 font-bold">
             Transform your resume into a job-winning document

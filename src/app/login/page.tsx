@@ -10,7 +10,7 @@ export default function LoginPage() {
       <div className="flex flex-col items-center justify-center px-4 py-12">
         <div className="w-full max-w-md space-y-8 bg-white p-8 rounded-lg shadow-md">
           <div className="text-center">
-            <h1 className="text-3xl font-bold text-gray-900">Suarte Login</h1>
+            <h1 className="text-3xl font-bold text-gray-900">Resume Wave Login</h1>
             <p className="mt-2 text-gray-600">
               Access your account or continue as guest
             </p>
