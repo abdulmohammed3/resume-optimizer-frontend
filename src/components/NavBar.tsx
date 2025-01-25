@@ -4,14 +4,15 @@ import { Menu, Transition } from '@headlessui/react';
 import { Bars3Icon, UserCircleIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { Fragment, useState } from 'react';
+import Button from './NavButton';
 
 export default function NavBar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
-    <nav className="bg-gray-900 shadow-lg">
+    <nav className="bg-gray-900/90 backdrop-blur-sm shadow-lg rounded-b-lg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
+        <div className="flex items-center justify-center h-16">
           {/* Left section - Logo and mobile menu button */}
           <div className="flex items-center">
             <button
@@ -23,19 +24,19 @@ export default function NavBar() {
             </button>
             <Link 
               href="/" 
-              className="ml-4 flex-shrink-0 flex items-center text-xl font-bold text-white"
+              className="ml-4 flex-shrink-0 flex items-center"
             >
-              Suarte
+              <Button text='Suarte' />
             </Link>
           </div>
 
           {/* Desktop navigation */}
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="hidden md:flex items-center space-x-8 mx-auto">
             <Link 
               href="/about"
               className="text-gray-200 hover:text-white transition-colors duration-200"
             >
-              About Us
+              <Button text='About Us' />
             </Link>
           </div>
 
