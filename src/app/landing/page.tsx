@@ -38,7 +38,8 @@ export default function Landing() {
             </div>
           ))}
         </motion.div>
-        <motion.button
+        <div className="flex justify-center">
+          <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             className="bg-white text-blue-600 px-8 py-4 rounded-full text-xl font-semibold shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
@@ -47,6 +48,7 @@ export default function Landing() {
               Optimize your resume
             </Link>
           </motion.button>
+        </div>
       </main>
     </div>
   );
